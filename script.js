@@ -1,4 +1,4 @@
-const API_BASE = "https://mongo-api-tys2.onrender.com"; // 🔁 Replace with deployed backend URL
+const API = "https://mongo-api-tys2.onrender.com"; // 🔁 Replace with deployed backend URL
 
 window.onload = loadUsers;
 

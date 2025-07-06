@@ -2,45 +2,34 @@ const API = "https://mongo-api-tys2.onrender.com"; // 🔁 Replace with deployed
 
 window.onload = () => {
   loadUsers();
-  setInterval(loadUsers, 5000); // ⏱️ Refresh every 5 seconds
+  setInterval(loadUsers, 1000); // ⏱️ Refresh every 5 seconds
 };
 
-
-let cachedUsers = [];
 
 async function loadUsers() {
   try {
     const res = await fetch(`${API}/users`);
     const users = await res.json();
+    const list = document.getElementById("user-list");
+    list.innerHTML = ""; // always clear the old list
 
-    // Compare with cached
-    const newData = JSON.stringify(users);
-    const oldData = JSON.stringify(cachedUsers);
+    users.forEach(user => {
+      const div = document.createElement("div");
+      div.className = "user";
 
-    if (newData !== oldData) {
-      cachedUsers = users;
-      const list = document.getElementById("user-list");
-      list.innerHTML = "";
+      div.innerHTML = `
+        <div>
+          <input type="text" value="${user.name}" id="name-${user._id}" />
+          <input type="email" value="${user.email}" id="email-${user._id}" />
+        </div>
+        <div class="user-actions">
+          <button onclick="updateUser('${user._id}')">Update</button>
+          <button class="delete-btn" onclick="deleteUser('${user._id}')">Delete</button>
+        </div>
+      `;
 
-      users.forEach(user => {
-        const div = document.createElement("div");
-        div.className = "user";
-
-        div.innerHTML = `
-          <div>
-            <input type="text" value="${user.name}" id="name-${user._id}" />
-            <input type="email" value="${user.email}" id="email-${user._id}" />
-          </div>
-          <div class="user-actions">
-            <button onclick="updateUser('${user._id}')">Update</button>
-            <button class="delete-btn" onclick="deleteUser('${user._id}')">Delete</button>
-          </div>
-        `;
-
-        list.appendChild(div);
-      });
-    }
-
+      list.appendChild(div);
+    });
   } catch (err) {
     console.error("Failed to load users", err);
     document.getElementById("status").textContent = "Failed to load users.";

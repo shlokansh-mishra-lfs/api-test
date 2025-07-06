@@ -1,17 +1,18 @@
-const API = "https://mongo-api-tys2.onrender.com"; // 🔁 Replace with deployed backend URL
+const API = "https://mongo-api-tys2.onrender.com";
 
 window.onload = () => {
   loadUsers();
-  setInterval(loadUsers, 1000); // ⏱️ Refresh every 5 seconds
+  setInterval(loadUsers, 5000); // every 5 seconds
 };
 
-
 async function loadUsers() {
+  console.log("Refreshing users...");
+
   try {
     const res = await fetch(`${API}/users`);
     const users = await res.json();
     const list = document.getElementById("user-list");
-    list.innerHTML = ""; // always clear the old list
+    list.innerHTML = "";
 
     users.forEach(user => {
       const div = document.createElement("div");
@@ -35,6 +36,7 @@ async function loadUsers() {
     document.getElementById("status").textContent = "Failed to load users.";
   }
 }
+
 
 
 async function updateUser(id) {

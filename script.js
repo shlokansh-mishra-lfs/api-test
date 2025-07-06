@@ -1,9 +1,14 @@
 const API = "https://mongo-api-tys2.onrender.com";
 
-window.onload = () => {
+//window.onload = () => {
+//  loadUsers();
+//  setInterval(loadUsers, 5000); // every 5 seconds
+//};
+
+document.addEventListener("DOMContentLoaded", () => {
   loadUsers();
-  setInterval(loadUsers, 5000); // every 5 seconds
-};
+  setInterval(loadUsers, 5000); // 🔁 auto-refresh every 5 seconds
+});
 
 async function loadUsers() {
   console.log("Refreshing users...");
@@ -78,4 +83,4 @@ document.getElementById("user-form").addEventListener("submit", async (e) => {
   loadUsers();
 });
 
-window.onload = loadUsers;
+

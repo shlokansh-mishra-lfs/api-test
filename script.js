@@ -1,31 +1,52 @@
 const API = "https://mongo-api-tys2.onrender.com"; // 🔁 Replace with deployed backend URL
 
-window.onload = loadUsers;
+window.onload = () => {
+  loadUsers();
+  setInterval(loadUsers, 5000); // ⏱️ Refresh every 5 seconds
+};
 
- async function loadUsers() {
-  const res = await fetch(`${API}/users`);
-  const users = await res.json();
-  const list = document.getElementById("user-list");
-  list.innerHTML = "";
 
-  users.forEach(user => {
-    const div = document.createElement("div");
-    div.className = "user";
+let cachedUsers = [];
 
-    div.innerHTML = `
-      <div>
-        <input type="text" value="${user.name}" id="name-${user._id}" />
-        <input type="email" value="${user.email}" id="email-${user._id}" />
-      </div>
-      <div class="user-actions">
-        <button class="update-btn" onclick="updateUser('${user._id}')">Update</button>
-        <button class="delete-btn" onclick="deleteUser('${user._id}')">Delete</button>
-      </div>
-    `;
+async function loadUsers() {
+  try {
+    const res = await fetch(`${API}/users`);
+    const users = await res.json();
 
-    list.appendChild(div);
-  });
+    // Compare with cached
+    const newData = JSON.stringify(users);
+    const oldData = JSON.stringify(cachedUsers);
+
+    if (newData !== oldData) {
+      cachedUsers = users;
+      const list = document.getElementById("user-list");
+      list.innerHTML = "";
+
+      users.forEach(user => {
+        const div = document.createElement("div");
+        div.className = "user";
+
+        div.innerHTML = `
+          <div>
+            <input type="text" value="${user.name}" id="name-${user._id}" />
+            <input type="email" value="${user.email}" id="email-${user._id}" />
+          </div>
+          <div class="user-actions">
+            <button onclick="updateUser('${user._id}')">Update</button>
+            <button class="delete-btn" onclick="deleteUser('${user._id}')">Delete</button>
+          </div>
+        `;
+
+        list.appendChild(div);
+      });
+    }
+
+  } catch (err) {
+    console.error("Failed to load users", err);
+    document.getElementById("status").textContent = "Failed to load users.";
+  }
 }
+
 
 async function updateUser(id) {
   const name = document.getElementById(`name-${id}`).value;
